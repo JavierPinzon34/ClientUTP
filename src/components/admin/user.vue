@@ -3,7 +3,7 @@
     <h1>Lista de Usuarios</h1>
     <div class="mb-3 text-left">
       <b-button v-b-modal.modal-1 variant="outline-primary">Crear nuevo usuario</b-button>
-      <b-modal id="modal-1" title="Creando nuevo usuario" hide-footer>
+      <b-modal id="modal-1" ref="modal-1" title="Creando nuevo usuario" hide-footer>
         <b-form @submit="onSubmit" @reset="onReset" v-if="show">
           <b-form-group
             id="input-group-1"
@@ -25,7 +25,7 @@
           >
             <b-form-input
               id="input-mail"
-              v-model="form.email"
+              v-model="form.mail"
               type="email"
               placeholder="Ingrese correo electrónico"
               required
@@ -77,7 +77,7 @@
           </b-button>
         </template>
       </b-table>
-    </div>
+    </div>    
   </div>
 </template>
 <script>
@@ -109,7 +109,7 @@ import axios from 'axios'
           }
         ],
         form: {
-          email: '',
+          mail: '',
           name: '',
           age: null,
           password: '',
@@ -133,13 +133,15 @@ import axios from 'axios'
         /* axios.post('https://fast-dusk-52904.herokuapp.com/user', this.form) */
         axios.post('https://fast-dusk-52904.herokuapp.com/api/user', this.form)
         .then(res => {
-          console.log(res)
+          //console.log(res)
+          this.items.push(res.data.user)
           this.$swal({
             icon: 'success',
-            title: 'Your work has been saved',
+            title: res.data.message,
             showConfirmButton: false,
             timer: 2000
           })
+          this.$refs['modal-1'].hide()
         })
         .catch(err => {
           console.error(err); 
