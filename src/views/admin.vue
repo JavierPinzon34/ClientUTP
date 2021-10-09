@@ -45,7 +45,7 @@ export default {
   },
   data() {
     return {
-      option: 1,
+      option: 3,
       visibleSidebar: true
     }
   },
