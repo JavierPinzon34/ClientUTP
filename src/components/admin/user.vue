@@ -3,8 +3,8 @@
     <h1>Lista de Usuarios</h1>
     <div class="mb-3 text-left">
       <b-button v-b-modal.modal-1 variant="outline-primary">Crear nuevo usuario</b-button>
-      <b-modal id="modal-1" ref="modal-1" title="Creando nuevo usuario" hide-footer>
-        <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+      <b-modal id="modal-1" ref="modal-1" :title="title" hide-footer>
+        <b-form @submit="onSubmit" v-if="show">
           <b-form-group
             id="input-group-1"
             label="Nombre:"
@@ -47,7 +47,7 @@
               id="input-password"
               v-model="form.password"
               type="password"
-              required
+              :required="!modoEdit"
             ></b-form-input>
           </b-form-group>  
 
@@ -61,18 +61,18 @@
 
           <div class="text-center">
             <b-button type="submit" variant="primary" class="mr-2">Aceptar</b-button>
-            <b-button  @click="$bvModal.hide('modal-1')">Cancelar</b-button>
+            <b-button  @click="$bvModal.hide('modal-1'), limpiar()">Cancelar</b-button>
           </div>
         </b-form>
       </b-modal>
     </div>
     <div>
       <b-table striped hover :fields="fields" :items="items">
-        <template #cell(actions)>
-          <b-button size="sm" variant="warning" class="mr-1">
+        <template #cell(actions) = 'row'>
+          <b-button @click="editUser(row.item)" size="sm" variant="warning" class="mr-1">
             Editar
           </b-button>
-          <b-button size="sm" variant="danger">
+          <b-button @click="DeleteUser(row.item)" size="sm" variant="danger">
             Eliminar
           </b-button>
         </template>
@@ -85,6 +85,7 @@ import axios from 'axios'
   export default {
     data() {
       return {
+        title: 'Creando nuevo usuario',
         items: [],
         fields: [
           {
@@ -109,13 +110,15 @@ import axios from 'axios'
           }
         ],
         form: {
+          id: '',
           mail: '',
           name: '',
           age: null,
           password: '',
           username: '',
         },
-        show: true
+        show: true,
+        modoEdit: false
       }
     },
     created() {
@@ -128,27 +131,78 @@ import axios from 'axios'
       })
     },
     methods: {
+      limpiar() {
+        this.form = {
+          mail: '',
+          name: '',
+          age: null,
+          password: '',
+          username: ''
+        }
+        this.title = 'Creando nuevo usuario'
+        this.modoEdit = false
+      },
       onSubmit(event) {
         event.preventDefault()
-        /* axios.post('https://fast-dusk-52904.herokuapp.com/user', this.form) */
-        axios.post('https://fast-dusk-52904.herokuapp.com/api/user', this.form)
-        .then(res => {
-          //console.log(res)
-          this.items.push(res.data.user)
-          this.$swal({
-            icon: 'success',
-            title: res.data.message,
-            showConfirmButton: false,
-            timer: 2000
+        if (this.modoEdit) {
+          axios.put(`https://fast-dusk-52904.herokuapp.com/api/user/${this.form.id}`, this.form)
+          .then(res => {
+            //console.log(res)
+            this.$swal({
+              icon: 'success',
+              title: res.data.message,
+              showConfirmButton: false,
+              timer: 2000
+            })
+            this.$refs['modal-1'].hide()
+            this.limpiar()
+            axios.get('https://fast-dusk-52904.herokuapp.com/api/user')
+            .then(res => {
+              this.items = res.data.users
+            })
+            .catch(err => {
+              console.error(err);
+            })              
           })
-          this.$refs['modal-1'].hide()
+          .catch(err => {
+            console.error(err); 
+          })      
+        } else {
+          axios.post('https://fast-dusk-52904.herokuapp.com/api/user', this.form)
+          .then(res => {
+            //console.log(res)
+            this.items.push(res.data.user)
+            this.$swal({
+              icon: 'success',
+              title: res.data.message,
+              showConfirmButton: false,
+              timer: 2000
+            })
+            this.$refs['modal-1'].hide()
+            this.limpiar()
+          })
+          .catch(err => {
+            console.error(err); 
+          })      
+        }  
+      },      
+      editUser(item) {
+        this.modoEdit = true
+        this.title = `Editando a ${item.name}`
+        axios.get(`https://fast-dusk-52904.herokuapp.com/api/user/${item._id}`)
+        .then(res => {
+          this.form.id = res.data.user._id
+          this.form.name = res.data.user.name
+          this.form.mail = res.data.user.mail
+          this.form.age = res.data.user.age
+          this.form.username = res.data.user.username
+          this.$refs['modal-1'].show()
         })
         .catch(err => {
           console.error(err); 
-        })        
+        })
       },
-      onReset(event) {
-        event.preventDefault()
+      DeleteUser(item) {
         this.$swal({
           title: '¿Esta seguro?',
           text: "No podra deshacer esto!",
@@ -159,24 +213,27 @@ import axios from 'axios'
           confirmButtonText: 'Si, Eliminar!'
         }).then((result) => {
           if (result.isConfirmed) {
-            // Reset our form values
-            this.form.email = ''
-            this.form.name = ''
-            this.form.food = null
-            this.form.checked = []
-            // Trick to reset/clear native browser form validation state
-            this.show = false
-            this.$nextTick(() => {
-              this.show = true
+            axios.delete(`https://fast-dusk-52904.herokuapp.com/api/user/${item._id}`)
+            .then(res => {
+              axios.get('https://fast-dusk-52904.herokuapp.com/api/user')
+              .then(res => {
+                this.items = res.data.users
+              })
+              .catch(err => {
+                console.error(err);
+              })   
+              this.$swal({
+                icon: 'success',
+                title: res.data.message,
+                showConfirmButton: false,
+                timer: 2000
+              })
             })
-            this.$swal(
-              'Eliminado!',
-              'La info a sido eliminada.',
-              'success'
-            )
+            .catch(err => {
+              console.error(err); 
+            })            
           }
         })
-        
       }
     }
   }

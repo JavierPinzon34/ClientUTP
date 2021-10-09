@@ -7,7 +7,6 @@
       <b-nav-item @click="changeOption(1)" :class="[ option==1 ? 'active' : '']">Categorias</b-nav-item>
       <b-nav-item @click="changeOption(2)" :class="[ option==2 ? 'active' : '']">Articulos</b-nav-item>
       <b-nav-item @click="changeOption(3)" :class="[ option==3 ? 'active' : '']">Usuarios</b-nav-item>
-      <b-nav-item @click="changeOption(3)" :class="[ option==3 ? 'active' : '']">Otro item</b-nav-item>
     </b-nav>
     <div class="content-custom">
       <b-navbar type="dark" variant="dark">
