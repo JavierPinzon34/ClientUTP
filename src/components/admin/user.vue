@@ -3,59 +3,80 @@
     <h1>Lista de Usuarios</h1>
     <div class="mb-3 text-left">
       <b-button v-b-modal.modal-1 variant="outline-primary">Crear nuevo usuario</b-button>
-      <b-modal id="modal-1" title="Creando nueva categoria" hide-footer>
+      <b-modal id="modal-1" title="Creando nuevo usuario" hide-footer>
         <b-form @submit="onSubmit" @reset="onReset" v-if="show">
           <b-form-group
             id="input-group-1"
-            label="Email address:"
-            label-for="input-1"
-            description="We'll never share your email with anyone else."
+            label="Nombre:"
+            label-for="input-name"
           >
             <b-form-input
-              id="input-1"
+              id="input-name"
+              v-model="form.name"
+              placeholder="Ingrese nombre"
+              required
+            ></b-form-input>
+          </b-form-group>
+
+          <b-form-group
+            id="input-group-2"
+            label="Correo electrónico:"
+            label-for="input-mail"
+          >
+            <b-form-input
+              id="input-mail"
               v-model="form.email"
               type="email"
-              placeholder="Enter email"
+              placeholder="Ingrese correo electrónico"
               required
             ></b-form-input>
           </b-form-group>
 
-          <b-form-group id="input-group-2" label="Your Name:" label-for="input-2">
+          <b-form-group id="input-group-3" label="Edad:" label-for="input-age">
             <b-form-input
-              id="input-2"
-              v-model="form.name"
-              placeholder="Enter name"
+              id="input-age"
+              v-model="form.age"
+              type="number"
+              placeholder="Ingrese edad"
               required
             ></b-form-input>
           </b-form-group>
 
-          <b-form-group id="input-group-3" label="Food:" label-for="input-3">
-            <b-form-select
-              id="input-3"
-              v-model="form.food"
-              :options="foods"
+          <b-form-group id="input-group-4" label="Password:" label-for="input-password">
+            <b-form-input
+              id="input-password"
+              v-model="form.password"
+              type="password"
               required
-            ></b-form-select>
-          </b-form-group>
+            ></b-form-input>
+          </b-form-group>  
 
-          <b-form-group id="input-group-4" v-slot="{ ariaDescribedby }">
-            <b-form-checkbox-group
-              v-model="form.checked"
-              id="checkboxes-4"
-              :aria-describedby="ariaDescribedby"
-            >
-              <b-form-checkbox value="me">Check me out</b-form-checkbox>
-              <b-form-checkbox value="that">Check that out</b-form-checkbox>
-            </b-form-checkbox-group>
-          </b-form-group>
+          <b-form-group id="input-group-5" label="Username:" label-for="input-username">
+            <b-form-input
+              id="input-username"
+              v-model="form.username"
+              required
+            ></b-form-input>
+          </b-form-group>                 
 
-          <b-button type="submit" variant="primary" class="mr-2">Aceptar</b-button>
-          <b-button type="reset" variant="danger">Limpiar</b-button>
+          <div class="text-center">
+            <b-button type="submit" variant="primary" class="mr-2">Aceptar</b-button>
+            <b-button  @click="$bvModal.hide('modal-1')">Cancelar</b-button>
+          </div>
         </b-form>
       </b-modal>
     </div>
     <div>
-      <b-table striped hover :items="items"></b-table>
+      <b-table striped hover :fields="fields" :items="items">
+        <template #cell(actions)>
+          <b-button size="sm" variant="warning" class="mr-1">
+            Editar
+          </b-button>
+          <b-button size="sm" variant="danger">
+            Eliminar
+          </b-button>
+        </template>
+      </b-table>
     </div>
   </div>
 </template>
@@ -65,35 +86,64 @@ import axios from 'axios'
     data() {
       return {
         items: [],
+        fields: [
+          {
+            key: 'name',
+            label: 'Nombre'
+          },
+          {
+            key: 'mail',
+            label: 'E-mail',
+          },
+          {
+            key: 'age',
+            label: 'Edad',
+          },
+          {
+            key: 'username',
+            label: 'Nombre de usuario',
+          },
+          {
+            key: 'actions',
+            label: 'Acciones',
+          }
+        ],
         form: {
           email: '',
           name: '',
-          food: null,
-          checked: []
+          age: null,
+          password: '',
+          username: '',
         },
-        foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
         show: true
       }
     },
     created() {
-      axios.get('https://fast-dusk-52904.herokuapp.com/user')
+      axios.get('https://fast-dusk-52904.herokuapp.com/api/user')
       .then(res => {
-        console.log(res.data.users)
         this.items = res.data.users
       })
       .catch(err => {
-        console.error(err); 
+        console.error(err);
       })
     },
     methods: {
       onSubmit(event) {
         event.preventDefault()
-        this.$swal({
-          icon: 'success',
-          title: 'Your work has been saved',
-          showConfirmButton: false,
-          timer: 2000
+        /* axios.post('https://fast-dusk-52904.herokuapp.com/user', this.form) */
+        axios.post('https://fast-dusk-52904.herokuapp.com/api/user', this.form)
+        .then(res => {
+          console.log(res)
+          this.$swal({
+            icon: 'success',
+            title: 'Your work has been saved',
+            showConfirmButton: false,
+            timer: 2000
+          })
         })
+        .catch(err => {
+          console.error(err); 
+        })        
       },
       onReset(event) {
         event.preventDefault()
