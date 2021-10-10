@@ -122,12 +122,19 @@ import axios from 'axios'
       }
     },
     created() {
+      axios.defaults.headers.common["Authorization"] = localStorage.getItem(
+      "jwtToken"
+      )
       axios.get('https://fast-dusk-52904.herokuapp.com/api/user')
       .then(res => {
         this.items = res.data.users
       })
       .catch(err => {
         console.error(err);
+        this.errors.push(err);
+        if (err.response.status === 401) {
+          this.$router.push('/login')
+        }
       })
     },
     methods: {

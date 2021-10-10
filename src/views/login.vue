@@ -25,18 +25,7 @@
             type="password"
             required
           ></b-form-input>
-        </b-form-group>        
-
-        <b-form-group id="input-group-4" v-slot="{ ariaDescribedby }">
-          <b-form-checkbox-group
-            v-model="form.checked"
-            id="checkboxes-4"
-            :aria-describedby="ariaDescribedby"
-          >
-            <b-form-checkbox value="me">Check me out</b-form-checkbox>
-            <b-form-checkbox value="that">Check that out</b-form-checkbox>
-          </b-form-checkbox-group>
-        </b-form-group>
+        </b-form-group>  
 
         <b-button type="submit" variant="primary" class="mr-2">Submit</b-button>
         <b-button type="reset" variant="danger">Regresar</b-button>
@@ -46,14 +35,13 @@
 </template>
 
 <script>
+import axios from 'axios'
   export default {
     data() {
       return {
         form: {
-          email: '',
+          username: '',
           name: '',
-          food: null,
-          checked: []
         },
         foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
         show: true
@@ -62,8 +50,16 @@
     methods: {
       onSubmit(event) {
         event.preventDefault()
-        alert(JSON.stringify(this.form))
-        this.$router.push('admin')
+        axios
+          .post(`http://localhost:3000/api/auth/login/`, this.login)
+          .then(response => {
+            localStorage.setItem("jwtToken", response.data.token)
+            this.$router.push('admin')
+          })
+          .catch(e => {
+            console.log(e);
+            this.errors.push(e);
+          });        
       },
       onReset(event) {
         event.preventDefault()
