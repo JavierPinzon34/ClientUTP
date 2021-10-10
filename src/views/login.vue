@@ -20,7 +20,7 @@
         <b-form-group id="input-group-2" label="Password:" label-for="input-2">
           <b-form-input
             id="input-2"
-            v-model="form.name"
+            v-model="form.password"
             type="password"
             required
           ></b-form-input>
@@ -40,7 +40,7 @@ import axios from 'axios'
       return {
         form: {
           username: '',
-          name: '',
+          password: '',
         },
         show: true
       }
