@@ -130,7 +130,7 @@ import axios from 'axios'
         this.items = res.data.users
       })
       .catch(err => {
-        console.error(err);
+        console.error(err.response.status);
         if (err.response.status === 401) {
           console.log('prueba push')
           this.$router.push('/login')
