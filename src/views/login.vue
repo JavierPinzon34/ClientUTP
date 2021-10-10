@@ -42,7 +42,6 @@ import axios from 'axios'
           username: '',
           name: '',
         },
-        foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
         show: true
       }
     },
@@ -50,7 +49,7 @@ import axios from 'axios'
       onSubmit(event) {
         event.preventDefault()
         axios
-          .post(`http://localhost:3000/api/auth/login/`, this.login)
+          .post(`http://localhost:3000/api/auth/login/`, this.form)
           .then(response => {
             localStorage.setItem("jwtToken", response.data.token)
             this.$router.push('/admin')
