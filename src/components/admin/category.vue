@@ -80,9 +80,8 @@ import axios from 'axios'
         show: true
       }
     },
-    created() {    
-      //https://fast-dusk-52904.herokuapp.com  
-      axios.get('localhost:3000/api/article')
+    created() { 
+      axios.get('https://fast-dusk-52904.herokuapp.com/api/article')
       .then(res => {
         this.items = res.data.users
       })
