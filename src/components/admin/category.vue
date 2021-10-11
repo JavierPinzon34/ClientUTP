@@ -81,7 +81,7 @@ import axios from 'axios'
       }
     },
     created() { 
-      axios.get('https://fast-dusk-52904.herokuapp.com/api/article')
+      axios.get('localhost:3000/api/article')
       .then(res => {
         this.items = res.data.users
       })

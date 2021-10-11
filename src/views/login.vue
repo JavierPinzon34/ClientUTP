@@ -42,21 +42,28 @@ import axios from 'axios'
           username: '',
           password: '',
         },
-        show: true
+        show: true,
+        errors: []
       }
     },
     methods: {
       onSubmit(event) {
         event.preventDefault()
+        console.log('hola')
         axios
           .post(`http://localhost:3000/api/auth/login/`, this.form)
           .then(response => {
             localStorage.setItem("jwtToken", response.data.token)
             this.$router.push('/admin')
           })
-          .catch(e => {
-            console.log(e);
-            this.errors.push(e);
+          .catch(err => {
+            this.$swal({
+              icon: 'error',
+              title: 'Oops...',
+              text: err.response.data.msg,
+            })
+            console.log("error", err.response.data.msg);
+            this.errors = err;
           });        
       },
       onReset(event) {

@@ -57,10 +57,8 @@ export default {
       this.visibleSidebar = !this.visibleSidebar
     },
     logout() {
-      localStorage.removeItem("jwtToken")
-      this.$router.push({
-        name: "Login"
-      })
+      localStorage.removeItem('jwtToken')
+      this.$router.push("/Login")
     }
   },
 }
