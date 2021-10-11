@@ -19,10 +19,10 @@ Vue.use(BootstrapVueIcons)
 Vue.use(VueRouter)
 Vue.use(VueSweetalert2);
 
-Vue.use(VueRouter)
+/* Vue.use(VueRouter)
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
-Vue.use(VueSweetalert2);
+Vue.use(VueSweetalert2); */
 
 Vue.config.productionTip = false
 
