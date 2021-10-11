@@ -60,7 +60,7 @@
   </div>
 </template>
 <script>
-//import axios from 'axios'
+import axios from 'axios'
   export default {
     data() {
       return {
@@ -79,6 +79,16 @@
         foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
         show: true
       }
+    },
+    created() {    
+      //https://fast-dusk-52904.herokuapp.com  
+      axios.get('localhost:3000/api/article')
+      .then(res => {
+        this.items = res.data.users
+      })
+      .catch(err => {
+        console.error(err.response.status);
+      })
     },
     methods: {
       onSubmit(event) {
